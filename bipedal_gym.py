@@ -35,7 +35,10 @@ stateBounds = [(-math.pi, math.pi),
            (-1, 1),
            (-1, 1),
            (-1, 1),
-           (-1, 1)]
+           (-1, 1),
+           (0, 5),  # Object height
+           (-1, 1), # Object tilt
+           (-1, 1)] # Object orientation]
 
 actionBounds = (-1, 1)
 
@@ -115,6 +118,8 @@ def runAlgorithmStep(env, i, qTable, doRender):
     total_reward=  0
     epsilon = 1.0 / ( i * .004)
 
+    object_height_threshold = 0.5
+
     while True:
         
         nextAction = convertNextAction(getNextAction(qTable, epsilon, state))
@@ -123,6 +128,17 @@ def runAlgorithmStep(env, i, qTable, doRender):
         nextState, reward, done, info, extra = env.step(nextAction)
         #print(nextState)
         nextState = discretizeState(nextState)
+
+        object_position = nextState[-3:]
+        object_height = object_position[0]  # Assuming height is the first dimension of object position
+
+        # Modify reward based on object stability
+        if object_height < object_height_threshold:
+            reward -= 100  # Large penalty for object falling
+            done = True  # End episode
+        else:
+            reward += 10 * object_height  # Reward for keeping the object stable
+
         total_reward += reward
         qTable[state][nextActionDiscretized] = updateQTable(qTable, state, nextActionDiscretized, reward, nextState)
         state = nextState
