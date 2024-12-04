@@ -112,7 +112,11 @@ class ContactDetector(contactListener):
 
             # Optional: Handle side collisions
             if (
+<<<<<<< HEAD
                 contact_point[0] <= left_x or contact_point[0] >= right_x or contact_point[1] <= bottom_y
+=======
+                contact_point[0] < left_x or contact_point[0] > right_x or contact_point[1] < bottom_y
+>>>>>>> 014cf34a9e0c7a16e6985aae69cecff3cdea8c41
             ):  # Collision on the sides
                 self.game_over = True
                 return
@@ -569,7 +573,10 @@ class BipedalWalkerWithObject(gym.Env, EzPickle):
         self.lidar = [LidarCallback() for _ in range(10)]
         if self.render_mode == "human":
             self.render()
+
         return self.step(np.array([0, 0, 0, 0]))[0]
+
+
     def step(self, action: np.ndarray):
         assert self.hull is not None
 
